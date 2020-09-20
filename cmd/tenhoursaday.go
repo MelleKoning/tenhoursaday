@@ -31,15 +31,23 @@ func main() {
 	times := 0
 	fmt.Print("\033[s") // save the cursor position
 	startTime := time.Now()
+
+	ticker := time.NewTicker(50 * time.Millisecond)
+
 	for !stop {
-		currentTime := time.Now()
-		millisecFromMidnight := currentTime.Hour()*3600000 + currentTime.Minute()*60000 + currentTime.Second()*1000 + currentTime.Nanosecond()/1000000
-		millisecInHundreds := float64(millisecFromMidnight) * fraction
-		Print100Time(currentTime, millisecInHundreds)
-		time.Sleep(50 * time.Millisecond)
-		times += 1
-		if time.Now().Sub(startTime) > time.Minute*1 {
-			stop = true
+		select {
+		case <-ticker.C:
+
+			currentTime := time.Now()
+			millisecFromMidnight := currentTime.Hour()*3600000 + currentTime.Minute()*60000 + currentTime.Second()*1000 + currentTime.Nanosecond()/1000000
+			millisecInHundreds := float64(millisecFromMidnight) * fraction
+			Print100Time(currentTime, millisecInHundreds)
+			//time.Sleep(50 * time.Millisecond)
+			times += 1
+			if time.Now().Sub(startTime) > time.Minute*1 {
+				stop = true
+			}
+		default:
 		}
 	}
 
